@@ -82,17 +82,17 @@ class SpeechToText extends Component
                 }
 
                 axios
-                    .post('https://speech.googleapis.com/v1/speech:recognize', requestData, { params: { key: SPEECH_API_KEY } })
-                    .then(({ data }) =>
+                .post('https://speech.googleapis.com/v1/speech:recognize', requestData, { params: { key: SPEECH_API_KEY } })
+                .then(({ data }) =>
+                {
+                    if (!data.results)
                     {
-                        if (!data.results)
-                        {
-                            Trace('Try again!!')
-                            return
-                        }
-                        const [{ alternatives }] = data.results
-                        alternatives.forEach(alternative => console.log(alternative))
-                    })
+                        Trace('Try again!!')
+                        return
+                    }
+                    const [{ alternatives }] = data.results
+                    alternatives.forEach(alternative => console.log(alternative))
+                })
             })
     }
 
