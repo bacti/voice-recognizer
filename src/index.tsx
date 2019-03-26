@@ -13,9 +13,6 @@ class SpeechToText extends Component
 {
     [x: string]: any
     audioContext = new AudioContext()
-    state = { url_broadcast: '' }
-    noiseMag = 0.01
-    lastMag = 0
 
     constructor()
     {
