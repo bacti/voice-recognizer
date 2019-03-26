@@ -1,0 +1,5 @@
+module.exports = {
+  SERVER_DOMAIN: '35.247.132.10',
+  SERVER_PORT: 8443,
+  CLIENT_PORT: 80
+};
