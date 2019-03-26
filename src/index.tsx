@@ -176,8 +176,22 @@ class SpeechToText extends Component
     {
         Trace('recording...')
         this.startButton.disabled = true
+        this.speech = 0
+        this.silent = 0
         this.recording = true
         this.recordingData = []
+
+        let eouHandler = async _ =>
+        {
+            if (this.started && this.recording && !this.endOfUtterance)
+            {
+                setTimeout(eouHandler, 100)
+                return
+            }
+            await this.Stop()
+            this.Start()
+        }
+        setTimeout(eouHandler, 100)
     }
 
     ProcessAudioBuffer(event)
