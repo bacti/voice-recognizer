@@ -1,5 +1,5 @@
-async function main()
-{
+// async function main()
+// {
     // Imports the Google Cloud client library
     const speech = require('@google-cloud/speech');
     const fs = require('fs');
@@ -34,5 +34,5 @@ async function main()
         .map(result => result.alternatives[0].transcript)
         .join('\n');
     console.log(`Transcription: ${transcription}`);
-}
-main().catch(console.error);
+// }
+// main().catch(console.error);
