@@ -5,6 +5,14 @@ video {
     height: 100%;
 }
 
+#startButton {
+    position: absolute;
+    margin: 20px;
+    padding: 10px;
+    top: 0px;
+    cursor: pointer;
+}
+
 #broadcast {
     position: absolute;
     margin: 10px;

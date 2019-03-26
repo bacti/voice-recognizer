@@ -1,4 +1,5 @@
 module.exports = {
+  SPEECH_API_KEY: 'AIzaSyAWEriX0ahrPBMHozN9zCfqxuyCwxVBFhs',
   SERVER_DOMAIN: '35.247.132.10',
   SERVER_PORT: 8443,
   CLIENT_PORT: 80
