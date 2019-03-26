@@ -1,0 +1,11 @@
+{
+    "compilerOptions":
+    {
+        "outDir": "./release",
+        "noImplicitAny": false,
+        "module": "commonjs",
+        "target": "es5",
+        "jsx": "react",
+        "jsxFactory": "h"
+    }
+}
