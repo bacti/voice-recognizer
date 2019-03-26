@@ -72,6 +72,19 @@ class SpeechToText extends Component
         // })
     }
 
+    Resample(sourceBuffer, sourceRate, targetRate)
+    {
+        let length = sourceBuffer.length
+        let offlineCtx = new OfflineAudioContext(1, length * targetRate / sourceRate, targetRate)
+        let buffer = offlineCtx.createBuffer(1, length, sourceRate)
+        buffer.copyToChannel(sourceBuffer, 0)
+        let source = offlineCtx.createBufferSource()
+        source.buffer = buffer
+        source.connect(offlineCtx.destination)
+        source.start()
+        offlineCtx.startRendering().then(buffer => resolve(buffer))
+    }
+
     Ref(ref, object)
     {
         this[ref] = object
