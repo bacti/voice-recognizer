@@ -203,18 +203,13 @@ class SpeechToText extends Component
     GotBuffers(buffers)
     {
         console.log(this.audioRecorder)
-        // the ONLY time gotBuffers is called is right after a new recording is completed - 
-        // so here's where we should set up the download.
-        this.audioRecorder.exportWAV(this.DoneEncoding)
-    }
-
-    DoneEncoding(blob)
-    {
-        const a = document.createElement('a')
-        a.href = window.URL.createObjectURL(blob)
-        a.download = 'myRecording.wav'
-        a.click()
-        // window.Recorder.setupDownload( blob, "myRecording.wav")
+        this.audioRecorder.exportWAV(blob =>
+        {
+            const a = document.createElement('a')
+            a.href = window.URL.createObjectURL(blob)
+            a.download = 'myRecording.wav'
+            a.click()
+        })
     }
 
     ProcessAudioBuffer(event)
