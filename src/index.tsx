@@ -3,6 +3,7 @@ const UUID = require('uuid/v1')
 
 import { Trace, Error } from './log'
 import { SPEECH_API_KEY, SERVER_DOMAIN, SERVER_PORT, CLIENT_PORT } from '../config'
+import './recorder'
 import './index.css'
 
 const BUFFER_SIZE = 2048
@@ -157,19 +158,33 @@ class SpeechToText extends Component
     constructor()
     {
         super()
-        // navigator.mediaDevices.getUserMedia({ audio: true })
-        // .then(stream =>
-        // {
-        //     const scriptNode = this.audioContext.createScriptProcessor(BUFFER_SIZE, 1, 1)
-        //     scriptNode.onaudioprocess = event => this.ProcessAudioBuffer(event)
-        //     scriptNode.connect(this.audioContext.destination)
-        //     this.audioContext.createMediaStreamSource(stream).connect(scriptNode)
-        // })
-        // .catch(e =>
-        // {
-        //     alert('getUserMedia() error: ' + e)
-        //     console.log(e)
-        // })
+        navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(stream =>
+        {
+            const inputPoint = this.audioContext.createGain()
+
+            const realAudioInput = this.audioContext.createMediaStreamSource(stream)
+            const audioInput = realAudioInput
+            audioInput.connect(inputPoint)
+
+            this.analyserNode = this.audioContext.createAnalyser()
+            this.analyserNode.fftSize = 2048
+            inputPoint.connect(this.analyserNode)
+
+            this.audioRecorder = new window.Recorder(inputPoint)
+
+            const zeroGain = this.audioContext.createGain()
+            zeroGain.gain.value = 0.0
+            inputPoint.connect(zeroGain)
+            zeroGain.connect(this.audioContext.destination)
+            this.updateAnalysers()
+
+        })
+        .catch(e =>
+        {
+            alert('getUserMedia() error: ' + e)
+            console.log(e)
+        })
     }
 
     Start()
@@ -259,7 +274,8 @@ class SpeechToText extends Component
 
 declare global {
     interface Window {
-        main: any
+        main: any,
+        Recorder: any,
     }
 }
 window.main = _ =>
