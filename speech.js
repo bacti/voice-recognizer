@@ -8,7 +8,7 @@ async function main()
     const client = new speech.SpeechClient();
 
     // The name of the audio file to transcribe
-    const fileName = './resources/audio.raw';
+    const fileName = './audio.raw';
 
     // Reads a local audio file and converts it to base64
     const file = fs.readFileSync(fileName);
