@@ -69,11 +69,11 @@ let options =
     ],
     resolveLoader:
     {
-        modules: [path.resolve('./node_modules')],
+        modules: [path.resolve('./node_modules'), process.env.NODE_PATH],
     },
     resolve:
     {
-        modules: [path.resolve('./node_modules')],
+        modules: [path.resolve('./node_modules'), process.env.NODE_PATH],
         extensions: ['.tsx', '.ts', '.js'],
     },
 }

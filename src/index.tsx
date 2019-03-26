@@ -1,4 +1,5 @@
 import { h, render, Component } from 'preact'
+import axios from 'axios'
 const UUID = require('uuid/v1')
 
 import { Trace, Error } from './log'
@@ -59,30 +60,52 @@ class SpeechToText extends Component
 
     }
 
-    GotBuffers(buffers)
+    GotBuffers([buffers])
     {
-        console.log(this.audioRecorder)
-        console.log(buffers)
-        // this.audioRecorder.exportWAV(blob =>
-        // {
-        //     const a = document.createElement('a')
-        //     a.href = window.URL.createObjectURL(blob)
-        //     a.download = 'myRecording.wav'
-        //     a.click()
-        // })
+        this.Resample(buffers, this.audioContext.sampleRate, 16000)
+            .then(buffers =>
+            {
+                const linear16 = Int16Array.from(buffers, x => x * 32767)
+                let base64 = btoa(String.fromCharCode(...new Uint8Array(linear16.buffer)))
+                const requestData =
+                {
+                    'audio': {
+                        'content': base64
+                    },
+                    'config': {
+                        'enableAutomaticPunctuation': false,
+                        'encoding': 'LINEAR16',
+                        'languageCode': 'en-US',
+                        'sampleRateHertz': 16000,
+                        'maxAlternatives': 30
+                    }
+                }
+
+                axios
+                    .post('https://speech.googleapis.com/v1/speech:recognize', requestData,
+                    {
+                        params: {
+                            key: SPEECH_API_KEY
+                        }
+                    })
+                    .then(abc => console.log(abc))
+            })
     }
 
     Resample(sourceBuffer, sourceRate, targetRate)
     {
-        let length = sourceBuffer.length
-        let offlineCtx = new OfflineAudioContext(1, length * targetRate / sourceRate, targetRate)
-        let buffer = offlineCtx.createBuffer(1, length, sourceRate)
-        buffer.copyToChannel(sourceBuffer, 0)
-        let source = offlineCtx.createBufferSource()
-        source.buffer = buffer
-        source.connect(offlineCtx.destination)
-        source.start()
-        offlineCtx.startRendering().then(buffer => resolve(buffer))
+        return new Promise<Float32Array>(resolve =>
+        {
+            let length = sourceBuffer.length
+            let offlineCtx = new OfflineAudioContext(1, length * targetRate / sourceRate, targetRate)
+            let buffer = offlineCtx.createBuffer(1, length, sourceRate)
+            buffer.copyToChannel(sourceBuffer, 0)
+            let source = offlineCtx.createBufferSource()
+            source.buffer = buffer
+            source.connect(offlineCtx.destination)
+            source.start()
+            offlineCtx.startRendering().then(audio => resolve(audio.getChannelData(0)))
+        })
     }
 
     Ref(ref, object)

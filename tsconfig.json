@@ -4,6 +4,7 @@
         "outDir": "./release",
         "noImplicitAny": false,
         "module": "commonjs",
+        "downlevelIteration": true,
         "target": "es5",
         "jsx": "react",
         "jsxFactory": "h"
