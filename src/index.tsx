@@ -55,8 +55,8 @@ class SpeechToText extends Component
         {
             this.startButton.disabled = false
             this.audioRecorder.stop()
-            this.audioRecorder.getBuffers(buffers =>  this.GotBuffers(buffers))
-        }, 3000)
+            this.audioRecorder.getBuffers(buffers => this.GotBuffers(buffers))
+        }, 1000)
 
     }
 
@@ -82,13 +82,12 @@ class SpeechToText extends Component
                 }
 
                 axios
-                    .post('https://speech.googleapis.com/v1/speech:recognize', requestData,
+                    .post('https://speech.googleapis.com/v1/speech:recognize', requestData, { params: { key: SPEECH_API_KEY } })
+                    .then(response =>
                     {
-                        params: {
-                            key: SPEECH_API_KEY
-                        }
+                        const [{ alternatives }] = response.data.results
+                        alternatives.forEach(alternative => console.log(alternative))
                     })
-                    .then(abc => console.log(abc))
             })
     }
 
