@@ -177,8 +177,6 @@ class SpeechToText extends Component
             zeroGain.gain.value = 0.0
             inputPoint.connect(zeroGain)
             zeroGain.connect(this.audioContext.destination)
-            this.updateAnalysers()
-
         })
         .catch(e =>
         {
@@ -191,22 +189,23 @@ class SpeechToText extends Component
     {
         Trace('recording...')
         this.startButton.disabled = true
-        this.speech = 0
-        this.silent = 0
-        this.recording = true
-        this.recordingData = []
-
-        let eouHandler = async _ =>
+        this.audioRecorder.clear()
+        this.audioRecorder.record()
+        setTimeout(evt =>
         {
-            if (this.started && this.recording && !this.endOfUtterance)
-            {
-                setTimeout(eouHandler, 100)
-                return
-            }
-            await this.Stop()
-            this.Start()
-        }
-        setTimeout(eouHandler, 100)
+            this.startButton.disabled = false
+            this.audioRecorder.stop()
+            this.audioRecorder.getBuffers(buffers =>  this.GotBuffers(buffers))
+        }, 10000)
+
+    }
+
+    GotBuffers(buffers)
+    {
+        console.log(this.audioRecorder)
+        // the ONLY time gotBuffers is called is right after a new recording is completed - 
+        // so here's where we should set up the download.
+        // this.audioRecorder.exportWAV(doneEncoding)
     }
 
     ProcessAudioBuffer(event)
