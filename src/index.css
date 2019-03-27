@@ -5,12 +5,15 @@ video {
     height: 100%;
 }
 
+body {
+    color: red;
+    background-color: white;
+}
+
 #container {
     position: absolute;
     margin: 20px;
     top: 0px;
-    color: red;
-    background-color: white;
 }
 
 #startButton {
