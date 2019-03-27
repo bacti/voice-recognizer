@@ -58,7 +58,7 @@ class SpeechToText extends Component
             this.startButton.disabled = false
             this.audioRecorder.stop()
             this.audioRecorder.getBuffers(buffers => this.GotBuffers(buffers))
-        }, 500)
+        }, 1000)
 
     }
 
@@ -90,7 +90,7 @@ class SpeechToText extends Component
                 }
 
                 const now = Date.now()
-                document.getElementById('log').innerText += `Send sample after${(now - this.timestamp) / 1000}s\n`
+                document.getElementById('log').innerText += `Send sample after ${(now - this.timestamp) / 1000}s\n`
                 this.timestamp = now
 
                 axios
