@@ -62,6 +62,12 @@ class SpeechToText extends Component
 
     GotBuffers([buffers])
     {
+        let freqByteData = new Uint8Array(this.analyserNode.frequencyBinCount)
+        this.analyserNode.getByteFrequencyData(freqByteData)
+        const freqValues = freqByteData.join('-').replace(/^([12]?\d\-)+|(\-[12]?\d)+$/g, '').split('-')
+        const freqMean = freqValues.reduce((acc, val) => acc + +val, 0) / freqValues.length
+        console.log(freqMean)
+
         this.Resample(buffers, this.audioContext.sampleRate, 16000)
             .then(buffers =>
             {
