@@ -153,12 +153,12 @@ export default class NewRecoreder
         this.recBuffersR = []
     }
 
-    GetBuffers()
+    GetBuffers(currCallback)
     {
         const buffers = []
         buffers.push(this.MergeBuffers(this.recBuffersL, this.recLength))
         buffers.push(this.MergeBuffers(this.recBuffersR, this.recLength))
-        return buffers
+        return currCallback(buffers)
     }
 
     MergeBuffers(recBuffers, recLength)
