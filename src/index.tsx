@@ -48,7 +48,7 @@ class SpeechToText extends Component
     Start()
     {
         Trace('recording...')
-        document.getElementById('log').innerText = ''
+        document.getElementById('log').innerText = 'Recording ...\n'
         this.timestamp = Date.now()
         this.startButton.disabled = true
         this.audioRecorder.clear()
@@ -68,7 +68,7 @@ class SpeechToText extends Component
         this.analyserNode.getByteFrequencyData(freqByteData)
         const freqValues = freqByteData.join('-').replace(/^([12]?\d\-)+|(\-[12]?\d)+$/g, '').split('-')
         const freqMean = freqValues.reduce((acc, val) => acc + +val, 0) / freqValues.length
-        document.getElementById('log').innerText = `Frequency Mean: ${freqMean}\n`
+        document.getElementById('log').innerText += `Frequency Mean: ${freqMean}\n`
 
         this.Resample(buffers, this.audioContext.sampleRate, 16000)
             .then(buffers =>
@@ -89,6 +89,10 @@ class SpeechToText extends Component
                     }
                 }
 
+                const now = Date.now()
+                document.getElementById('log').innerText += `Send sample after${(now - this.timestamp) / 1000}s\n`
+                this.timestamp = now
+
                 axios
                 .post('https://speech.googleapis.com/v1/speech:recognize', requestData, { params: { key: SPEECH_API_KEY } })
                 .then(({ data }) =>
@@ -106,7 +110,7 @@ class SpeechToText extends Component
                         document.getElementById('log').innerText += `* [${transcript}] ${(confidence*100).toFixed(2)}%\n`
                     })
                     const now = Date.now()
-                    document.getElementById('log').innerText += `In ${(now - this.timestamp) / 1000}s`
+                    document.getElementById('log').innerText += `Get transcript in ${(now - this.timestamp) / 1000}s`
                 })
             })
     }
