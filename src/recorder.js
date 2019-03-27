@@ -1,4 +1,4 @@
-export default class Recoreder
+export default class Recorder
 {
     constructor(source, config = {})
     {
@@ -58,5 +58,5 @@ export default class Recoreder
             offset += recBuffers[i].length
         }
         return result
-      }
+    }
 }

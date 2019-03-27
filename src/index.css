@@ -9,6 +9,10 @@ video {
     position: absolute;
     margin: 20px;
     top: 0px;
+    color: red;
+}
+
+#startButton {
     cursor: pointer;
 }
 
