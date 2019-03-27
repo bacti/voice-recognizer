@@ -49,6 +49,7 @@ class SpeechToText extends Component
     {
         Trace('recording...')
         document.getElementById('log').innerText = ''
+        this.timestamp = Date.now()
         this.startButton.disabled = true
         this.audioRecorder.clear()
         this.audioRecorder.record()
@@ -104,6 +105,8 @@ class SpeechToText extends Component
                     {
                         document.getElementById('log').innerText += `* [${transcript}] ${(confidence*100).toFixed(2)}%\n`
                     })
+                    const now = Date.now()
+                    document.getElementById('log').innerText += `In ${(now - this.timestamp) / 1000}s`
                 })
             })
     }
