@@ -112,9 +112,9 @@ DEALINGS IN THE SOFTWARE.
 
 class Recorder
 {
-    constructor(source, cfg = {})
+    constructor(source, config = {})
     {
-        this.config = cfg
+        this.config = config
         this.context = source.context
 
         const bufferLen = config.bufferLen || 4096
