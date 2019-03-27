@@ -58,7 +58,7 @@ class SpeechToText extends Component
             this.startButton.disabled = false
             this.audioRecorder.stop()
             this.audioRecorder.getBuffers(buffers => this.GotBuffers(buffers))
-        }, 1000)
+        }, 500)
 
     }
 
@@ -105,7 +105,7 @@ class SpeechToText extends Component
                     }
                     const [{ alternatives }] = data.results
                     console.log(alternatives)
-                    alternatives.forEach(({ transcript, confidence}) =>
+                    alternatives.forEach(({ transcript, confidence = 1 }) =>
                     {
                         document.getElementById('log').innerText += `* [${transcript}] ${(confidence*100).toFixed(2)}%\n`
                     })
