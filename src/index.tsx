@@ -4,11 +4,9 @@ const UUID = require('uuid/v1')
 
 import { Trace, Error } from './log'
 import { SPEECH_API_KEY, SERVER_DOMAIN, SERVER_PORT, CLIENT_PORT } from '../config'
-import Recorder from './recorder'
+// import Recorder from './recorder'
+import './recorder'
 import './index.css'
-
-const BUFFER_SIZE = 2048
-const SPEECH_THRESHOLD = 5 // 5 times wrt noise amplitude
 
 class SpeechToText extends Component
 {
@@ -31,7 +29,7 @@ class SpeechToText extends Component
             this.analyserNode.fftSize = 2048
             inputPoint.connect(this.analyserNode)
 
-            this.audioRecorder = new Recorder(inputPoint)
+            this.audioRecorder = new window.Recorder(inputPoint)
 
             const zeroGain = this.audioContext.createGain()
             zeroGain.gain.value = 0.0
@@ -154,7 +152,8 @@ class SpeechToText extends Component
 
 declare global {
     interface Window {
-        main: any
+        main: any, 
+        Recorder: any,
     }
 }
 window.main = _ =>
