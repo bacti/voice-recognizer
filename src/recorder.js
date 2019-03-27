@@ -110,7 +110,7 @@ DEALINGS IN THE SOFTWARE.
 
 })(window);
 
-export default class NewRecoreder
+export default class Recoreder
 {
     constructor(source, config = {})
     {
@@ -118,22 +118,21 @@ export default class NewRecoreder
         this.context = source.context
 
         const bufferLen = config.bufferLen || 4096
-        !this.context.createScriptProcessor
-            ? this.node = this.context.createJavaScriptNode(bufferLen, 2, 2)
-            : this.node = this.context.createScriptProcessor(bufferLen, 2, 2)
-        this.node.onaudioprocess = evt =>
+        const scriptNode = this.context.createScriptProcessor(bufferLen, 2, 2)
+        scriptNode.onaudioprocess = evt =>
         {
             if (!this.recording)
                 return
             const buffersL = evt.inputBuffer.getChannelData(0)
             const buffersR = evt.inputBuffer.getChannelData(1)
-            this.recBuffersL.push(buffersL)
-            this.recBuffersR.push(buffersR)
+
+            this.recBuffersL.push(buffersL.slice())
+            this.recBuffersR.push(buffersR.slice())
             this.recLength += buffersL.length
         }
      
-        source.connect(this.node)
-        this.node.connect(this.context.destination)
+        source.connect(scriptNode)
+        scriptNode.connect(this.context.destination)
     }
 
     Record()
