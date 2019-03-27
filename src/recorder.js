@@ -152,4 +152,12 @@ class Recorder
         this.recBuffersL = []
         this.recBuffersR = []
     }
+
+    GetBuffers()
+    {
+        const buffers = []
+        buffers.push(this.MergeBuffers(this.recBuffersL, this.recLength))
+        buffers.push(this.MergeBuffers(this.recBuffersR, this.recLength))
+        return buffers
+    }
 }
