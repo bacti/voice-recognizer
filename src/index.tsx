@@ -97,10 +97,10 @@ class SpeechToText extends Component
                         return
                     }
                     const [{ alternatives }] = data.results
-                    alternatives.forEach(alternative =>
+                    console.log(alternatives)
+                    alternatives.forEach(({ transcript, confidence}) =>
                     {
-                        document.getElementById('log').innerText += JSON.stringify(alternative) + '\n'
-                        console.log(alternative)
+                        document.getElementById('log').innerText += `* [${transcript}] ${(confidence*100).toFixed(2)}%\n`
                     })
                 })
             })
