@@ -149,9 +149,11 @@ class SpeechToText extends Component
     }
 }
 
-declare global {
-    interface Window {
-        main: any
+declare global
+{
+    interface Window
+    {
+        [x: string]: any
     }
 }
 window.main = _ =>
