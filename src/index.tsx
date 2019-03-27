@@ -117,11 +117,11 @@ class SpeechToText extends Component
     {
         return new Promise<Float32Array>(resolve =>
         {
-            let length = sourceBuffer.length
-            let offlineCtx = new OfflineAudioContext(1, length * targetRate / sourceRate, targetRate)
-            let buffer = offlineCtx.createBuffer(1, length, sourceRate)
+            const length = sourceBuffer.length
+            const offlineCtx = new OfflineAudioContext(1, length * targetRate / sourceRate, targetRate)
+            const buffer = offlineCtx.createBuffer(1, length, sourceRate)
             buffer.copyToChannel(sourceBuffer, 0)
-            let source = offlineCtx.createBufferSource()
+            const source = offlineCtx.createBufferSource()
             source.buffer = buffer
             source.connect(offlineCtx.destination)
             source.start()
