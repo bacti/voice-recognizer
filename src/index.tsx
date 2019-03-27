@@ -48,6 +48,7 @@ class SpeechToText extends Component
     Start()
     {
         Trace('recording...')
+        document.getElementById('log').innerText = ''
         this.startButton.disabled = true
         this.audioRecorder.clear()
         this.audioRecorder.record()
@@ -94,6 +95,7 @@ class SpeechToText extends Component
                     if (!data.results)
                     {
                         Trace('Try again!!')
+                        document.getElementById('log').innerText += `Try again!!`
                         return
                     }
                     const [{ alternatives }] = data.results
