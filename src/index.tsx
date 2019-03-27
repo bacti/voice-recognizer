@@ -5,6 +5,9 @@ import { SPEECH_API_KEY } from '../config'
 import Recorder from './recorder'
 import './index.css'
 
+const AudioContext = window.AudioContext || window.webkitAudioContext
+const OfflineAudioContext = window.OfflineAudioContext || window.webkitOfflineAudioContext
+
 class SpeechToText extends Component
 {
     [x: string]: any
