@@ -121,6 +121,19 @@ class Recorder
         (!this.context.createScriptProcessor)
             ? this.node = this.context.createJavaScriptNode(bufferLen, 2, 2)
             : this.node = this.context.createScriptProcessor(bufferLen, 2, 2)
+        this.node.onaudioprocess = evt =>
+        {
+            if (!this.recording)
+                return
+            worker.postMessage({
+                command: 'record',
+                buffer:
+                [
+                    evt.inputBuffer.getChannelData(0),
+                    evt.inputBuffer.getChannelData(1),
+                ]
+            });
+        }
      
         source.connect(this.node)
         this.node.connect(this.context.destination)
@@ -138,6 +151,8 @@ class Recorder
 
     Clear()
     {
-        worker.postMessage({ command: 'clear' });
+        this.recLength = 0
+        this.recBuffersL = []
+        this.recBuffersR = []
     }
 }
