@@ -1,9 +1,7 @@
 import { h, render, Component } from 'preact'
 import axios from 'axios'
-const UUID = require('uuid/v1')
-
-import { Trace, Error } from './log'
-import { SPEECH_API_KEY, SERVER_DOMAIN, SERVER_PORT, CLIENT_PORT } from '../config'
+import { Trace } from './log'
+import { SPEECH_API_KEY } from '../config'
 import Recorder from './recorder'
 import './index.css'
 
