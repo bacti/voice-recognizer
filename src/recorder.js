@@ -125,4 +125,19 @@ class Recorder
         source.connect(this.node)
         this.node.connect(this.context.destination)
     }
+
+    Record()
+    {
+        this.recording = true
+    }
+
+    Stop()
+    {
+        this.recording = false
+    }
+
+    Clear()
+    {
+        worker.postMessage({ command: 'clear' });
+    }
 }
