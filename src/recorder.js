@@ -160,4 +160,16 @@ class Recorder
         buffers.push(this.MergeBuffers(this.recBuffersR, this.recLength))
         return buffers
     }
+
+    MergeBuffers(recBuffers, recLength)
+    {
+        const result = new Float32Array(recLength)
+        let offset = 0
+        for (let i = 0; i < recBuffers.length; i++)
+        {
+            result.set(recBuffers[i], offset)
+            offset += recBuffers[i].length
+        }
+        return result
+      }
 }
