@@ -66,7 +66,7 @@ class SpeechToText extends Component
         this.analyserNode.getByteFrequencyData(freqByteData)
         const freqValues = freqByteData.join('-').replace(/^([12]?\d\-)+|(\-[12]?\d)+$/g, '').split('-')
         const freqMean = freqValues.reduce((acc, val) => acc + +val, 0) / freqValues.length
-        console.log(freqMean)
+        document.getElementById('log').innerText = `Frequency Mean: ${freqMean}\n`
 
         this.Resample(buffers, this.audioContext.sampleRate, 16000)
             .then(buffers =>
@@ -97,7 +97,11 @@ class SpeechToText extends Component
                         return
                     }
                     const [{ alternatives }] = data.results
-                    alternatives.forEach(alternative => console.log(alternative))
+                    alternatives.forEach(alternative =>
+                    {
+                        document.getElementById('log').innerText += JSON.stringify(alternative) + '\n'
+                        console.log(alternative)
+                    })
                 })
             })
     }
@@ -133,6 +137,7 @@ class SpeechToText extends Component
         return (
             <div id='container'>
                 <button ref={el => this.Ref('startButton', el)} id='startButton'>Start</button>
+                <div id='log'></div>
             </div>
         )
     }
