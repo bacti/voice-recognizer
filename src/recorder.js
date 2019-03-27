@@ -125,14 +125,11 @@ class Recorder
         {
             if (!this.recording)
                 return
-            worker.postMessage({
-                command: 'record',
-                buffer:
-                [
-                    evt.inputBuffer.getChannelData(0),
-                    evt.inputBuffer.getChannelData(1),
-                ]
-            });
+            const buffersL = evt.inputBuffer.getChannelData(0)
+            const buffersR = evt.inputBuffer.getChannelData(1)
+            this.recBuffersL.push(buffersL)
+            this.recBuffersR.push(buffersR)
+            this.recLength += buffersL.length
         }
      
         source.connect(this.node)
