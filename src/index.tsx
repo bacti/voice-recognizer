@@ -3,7 +3,6 @@ import axios from 'axios'
 import { Trace } from './log'
 import { SPEECH_API_KEY } from '../config'
 import Recorder from './recorder'
-import Resampler from './resampler'
 import './index.css'
 
 const AudioContext = window.AudioContext || window.webkitAudioContext
@@ -69,20 +68,10 @@ class SpeechToText extends Component
         const freqMean = freqValues.reduce((acc, val) => acc + +val, 0) / freqValues.length
         document.getElementById('log').innerText += `Frequency Mean: ${freqMean}\n`
 
-        const resampler = new Resampler(this.audioContext.sampleRate, 16000, 1, buffers)
-        const resampled = resampler.resampler(buffers.length * 16000 / this.audioContext.sampleRate)
-        console.log(resampler)
-        console.log(resampled)
-
-        const downsample = this.DownSampleBuffer(this.audioContext, buffers, 16000)
-        console.log(downsample)
-   
-
-        // this.Resample(this.audioContext, buffers, 16000)
-        //     .then(buffers =>
-        //     {
-        //         console.log(buffers)
-                const linear16 = Int16Array.from(downsample, x => x * 32767)
+        this.DownSampleBuffer(this.audioContext, buffers, 16000)
+            .then(buffers =>
+            {
+                const linear16 = Int16Array.from(buffers, x => x * 32767)
                 let base64 = btoa(String.fromCharCode(...new Uint8Array(linear16.buffer)))
                 const requestData =
                 {
@@ -121,49 +110,40 @@ class SpeechToText extends Component
                     const now = Date.now()
                     document.getElementById('log').innerText += `Get transcript in ${(now - this.timestamp) / 1000}s`
                 })
-            // })
+            })
     }
 
-    DownSampleBuffer(context, buffer, targetRate)
-    {
-        if (targetRate == context.sampleRate) {
-            return buffer;
-        }
-        if (targetRate > context.sampleRate) {
-            throw "downsampling rate show be smaller than original sample rate";
-        }
-        var sampleRateRatio = context.sampleRate / targetRate;
-        var newLength = Math.round(buffer.length / sampleRateRatio);
-        var result = new Float32Array(newLength);
-        var offsetResult = 0;
-        var offsetBuffer = 0;
-        while (offsetResult < result.length) {
-            var nextOffsetBuffer = Math.round((offsetResult + 1) * sampleRateRatio);
-            var accum = 0, count = 0;
-            for (var i = offsetBuffer; i < nextOffsetBuffer && i < buffer.length; i++) {
-                accum += buffer[i];
-                count++;
-            }
-            result[offsetResult] = accum / count;
-            offsetResult++;
-            offsetBuffer = nextOffsetBuffer;
-        }
-        return result;
-    }
-
-    Resample(context, sourceBuffer, targetRate)
+    DownSampleBuffer(context, sourceBuffer, targetRate)
     {
         return new Promise<Float32Array>(resolve =>
         {
-            const length = sourceBuffer.length
-            const offlineCtx = new OfflineAudioContext(1, length * targetRate / context.sampleRate, targetRate)
-            const buffer = offlineCtx.createBuffer(1, length, context.sampleRate)
-            buffer.copyToChannel(sourceBuffer, 0)
-            const source = offlineCtx.createBufferSource()
-            source.buffer = buffer
-            source.connect(offlineCtx.destination)
-            source.start()
-            offlineCtx.startRendering().then(audio => resolve(audio.getChannelData(0)))
+            if (targetRate == context.sampleRate)
+            {
+                resolve(sourceBuffer)
+                return
+            }
+            if (targetRate > context.sampleRate)
+                throw 'downsampling rate show be smaller than original sample rate'
+
+            const sampleRateRatio = context.sampleRate / targetRate
+            const newLength = Math.round(sourceBuffer.length / sampleRateRatio)
+            const result = new Float32Array(newLength)
+            let offsetResult = 0
+            let offsetBuffer = 0
+            while (offsetResult < result.length)
+            {
+                const nextOffsetBuffer = Math.round((offsetResult + 1) * sampleRateRatio)
+                let accum = 0, count = 0
+                for (var i = offsetBuffer; i < nextOffsetBuffer && i < sourceBuffer.length; i++)
+                {
+                    accum += sourceBuffer[i]
+                    count++
+                }
+                result[offsetResult] = accum / count
+                offsetResult++
+                offsetBuffer = nextOffsetBuffer
+            }
+            resolve(result)
         })
     }
 
