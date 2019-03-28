@@ -69,10 +69,20 @@ class SpeechToText extends Component
         const freqMean = freqValues.reduce((acc, val) => acc + +val, 0) / freqValues.length
         document.getElementById('log').innerText += `Frequency Mean: ${freqMean}\n`
 
-        this.Resample(this.audioContext, buffers, 16000)
-            .then(buffers =>
-            {
-                const linear16 = Int16Array.from(buffers, x => x * 32767)
+        const resampler = new Resampler(this.audioContext.sampleRate, 16000, 1, buffers)
+        const resampled = resampler.resampler(buffers.length * 16000 / this.audioContext.sampleRate)
+        console.log(resampler)
+        console.log(resampled)
+
+        const downsample = this.DownSampleBuffer(this.audioContext, buffers, 16000)
+        console.log(downsample)
+   
+
+        // this.Resample(this.audioContext, buffers, 16000)
+        //     .then(buffers =>
+        //     {
+        //         console.log(buffers)
+                const linear16 = Int16Array.from(downsample, x => x * 32767)
                 let base64 = btoa(String.fromCharCode(...new Uint8Array(linear16.buffer)))
                 const requestData =
                 {
@@ -111,7 +121,34 @@ class SpeechToText extends Component
                     const now = Date.now()
                     document.getElementById('log').innerText += `Get transcript in ${(now - this.timestamp) / 1000}s`
                 })
-            })
+            // })
+    }
+
+    DownSampleBuffer(context, buffer, targetRate)
+    {
+        if (targetRate == context.sampleRate) {
+            return buffer;
+        }
+        if (targetRate > context.sampleRate) {
+            throw "downsampling rate show be smaller than original sample rate";
+        }
+        var sampleRateRatio = context.sampleRate / targetRate;
+        var newLength = Math.round(buffer.length / sampleRateRatio);
+        var result = new Float32Array(newLength);
+        var offsetResult = 0;
+        var offsetBuffer = 0;
+        while (offsetResult < result.length) {
+            var nextOffsetBuffer = Math.round((offsetResult + 1) * sampleRateRatio);
+            var accum = 0, count = 0;
+            for (var i = offsetBuffer; i < nextOffsetBuffer && i < buffer.length; i++) {
+                accum += buffer[i];
+                count++;
+            }
+            result[offsetResult] = accum / count;
+            offsetResult++;
+            offsetBuffer = nextOffsetBuffer;
+        }
+        return result;
     }
 
     Resample(context, sourceBuffer, targetRate)
