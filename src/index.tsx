@@ -69,10 +69,7 @@ class SpeechToText extends Component
         const freqMean = freqValues.reduce((acc, val) => acc + +val, 0) / freqValues.length
         document.getElementById('log').innerText += `Frequency Mean: ${freqMean}\n`
 
-        const resampler = new Resampler(this.audioContext.sampleRate, 16000, 1, buffers)
-        console.log(resampler)
-   
-        this.Resample(buffers, this.audioContext.sampleRate, 16000)
+        this.Resample(this.audioContext, buffers, 16000)
             .then(buffers =>
             {
                 const linear16 = Int16Array.from(buffers, x => x * 32767)
@@ -117,13 +114,13 @@ class SpeechToText extends Component
             })
     }
 
-    Resample(sourceBuffer, sourceRate, targetRate)
+    Resample(context, sourceBuffer, targetRate)
     {
         return new Promise<Float32Array>(resolve =>
         {
             const length = sourceBuffer.length
-            const offlineCtx = new OfflineAudioContext(1, length * targetRate / sourceRate, targetRate)
-            const buffer = offlineCtx.createBuffer(1, length, sourceRate)
+            const offlineCtx = new OfflineAudioContext(1, length * targetRate / context.sampleRate, targetRate)
+            const buffer = offlineCtx.createBuffer(1, length, context.sampleRate)
             buffer.copyToChannel(sourceBuffer, 0)
             const source = offlineCtx.createBufferSource()
             source.buffer = buffer
