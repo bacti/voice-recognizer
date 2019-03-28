@@ -77,8 +77,8 @@ let options =
         extensions: ['.tsx', '.ts', '.js'],
     },
 }
-if (process.env.NODE_ENV == 'production')
-{
-    // options.plugins.push(new UglifyJSPlugin())
-}
+// if (process.env.NODE_ENV == 'production')
+// {
+//     options.plugins.push(new UglifyJSPlugin())
+// }
 module.exports = options
