@@ -3,6 +3,7 @@ import axios from 'axios'
 import { Trace } from './log'
 import { SPEECH_API_KEY } from '../config'
 import Recorder from './recorder'
+import Resampler from './resampler'
 import './index.css'
 
 const AudioContext = window.AudioContext || window.webkitAudioContext
@@ -68,6 +69,9 @@ class SpeechToText extends Component
         const freqMean = freqValues.reduce((acc, val) => acc + +val, 0) / freqValues.length
         document.getElementById('log').innerText += `Frequency Mean: ${freqMean}\n`
 
+        const resampler = new Resampler(this.audioContext.sampleRate, 16000, 1, buffers)
+        console.log(resampler)
+   
         this.Resample(buffers, this.audioContext.sampleRate, 16000)
             .then(buffers =>
             {
