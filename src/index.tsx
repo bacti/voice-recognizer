@@ -19,15 +19,11 @@ class SpeechToText extends Component
         navigator.mediaDevices.getUserMedia({ audio: true })
         .then(stream =>
         {
-            const inputPoint = this.audioContext.createGain()
-            const realAudioInput = this.audioContext.createMediaStreamSource(stream)
-            const audioInput = realAudioInput
-            audioInput.connect(inputPoint)
-
-            this.audioRecorder = new Recorder(inputPoint)
+            const audioInput = this.audioContext.createMediaStreamSource(stream)
+            this.audioRecorder = new Recorder(audioInput)
             this.analyserNode = this.audioContext.createAnalyser()
             this.analyserNode.fftSize = 2048
-            inputPoint.connect(this.analyserNode)
+            audioInput.connect(this.analyserNode)
         })
         .catch(e =>
         {
@@ -171,5 +167,9 @@ declare global
 window.main = _ =>
 {
     Trace('speech-to-text')
-    document.body.onclick = _ => render(<SpeechToText />, document.body)
+    document.body.onclick = _ =>
+    {
+        document.body.onclick = null
+        render(<SpeechToText />, document.body)
+    }
 }
