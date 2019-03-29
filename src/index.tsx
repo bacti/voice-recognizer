@@ -20,21 +20,14 @@ class SpeechToText extends Component
         .then(stream =>
         {
             const inputPoint = this.audioContext.createGain()
-
             const realAudioInput = this.audioContext.createMediaStreamSource(stream)
             const audioInput = realAudioInput
             audioInput.connect(inputPoint)
 
+            this.audioRecorder = new Recorder(inputPoint)
             this.analyserNode = this.audioContext.createAnalyser()
             this.analyserNode.fftSize = 2048
             inputPoint.connect(this.analyserNode)
-
-            this.audioRecorder = new Recorder(inputPoint)
-
-            const zeroGain = this.audioContext.createGain()
-            zeroGain.gain.value = 0.0
-            inputPoint.connect(zeroGain)
-            zeroGain.connect(this.audioContext.destination)
         })
         .catch(e =>
         {
