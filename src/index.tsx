@@ -171,5 +171,5 @@ declare global
 window.main = _ =>
 {
     Trace('speech-to-text')
-    render(<SpeechToText />, document.body)
+    document.body.onclick = _ => render(<SpeechToText />, document.body)
 }
