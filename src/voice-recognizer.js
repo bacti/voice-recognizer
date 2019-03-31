@@ -1,12 +1,8 @@
-import { h, render, Component } from 'preact'
 import axios from 'axios'
 import { Trace } from './log'
 import { SPEECH_API_KEY } from '../config'
 import Recorder from './recorder'
-import './index.css'
-
 const AudioContext = window.AudioContext || window.webkitAudioContext
-const OfflineAudioContext = window.OfflineAudioContext || window.webkitOfflineAudioContext
 
 export default class VoiceRecognizer
 {
@@ -133,25 +129,5 @@ export default class VoiceRecognizer
             }
             resolve(result)
         })
-    }
-
-    Ref(ref, object)
-    {
-        this[ref] = object
-    }
-
-    componentDidMount()
-    {
-        this.startButton.onclick = _ => this.Start()
-    }
-
-    render()
-    {
-        return (
-            <div id='container'>
-                <button ref={el => this.Ref('startButton', el)} id='startButton'>Start</button>
-                <div id='log'></div>
-            </div>
-        )
     }
 }
