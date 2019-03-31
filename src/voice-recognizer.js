@@ -1,28 +1,35 @@
 import axios from 'axios'
 import Recorder from './recorder'
-import { Trace } from './log'
+import { Trace, Error } from './log'
 const AudioContext = window.AudioContext || window.webkitAudioContext
 
 export default class VoiceRecognizer
 {
-    constructor({ key })
+    constructor(options)
     {
-        this.googleSpeechKey = key
         this.audioContext = new AudioContext()
-        navigator.mediaDevices.getUserMedia({ audio: true })
-        .then(stream =>
-        {
-            const audioInput = this.audioContext.createMediaStreamSource(stream)
-            this.audioRecorder = new Recorder(audioInput)
-            this.analyserNode = this.audioContext.createAnalyser()
-            this.analyserNode.fftSize = 2048
-            audioInput.connect(this.analyserNode)
-        })
-        .catch(e =>
-        {
-            alert('getUserMedia() error: ' + e)
-            console.log(e)
-        })
+        this.options = options
+    }
+
+    Initialize()
+    {
+        return new Promise((resolve, reject) =>
+            navigator.mediaDevices.getUserMedia({ audio: true })
+            .then(stream =>
+            {
+                const audioInput = this.audioContext.createMediaStreamSource(stream)
+                this.audioRecorder = new Recorder(audioInput)
+                this.analyserNode = this.audioContext.createAnalyser()
+                this.analyserNode.fftSize = 2048
+                audioInput.connect(this.analyserNode)
+                resolve()
+            })
+            .catch(e =>
+            {
+                Error(e)
+                reject()
+            })
+        )
     }
 
     Start()
