@@ -1,16 +1,14 @@
 import axios from 'axios'
-import { Trace } from './log'
-import { SPEECH_API_KEY } from '../config'
 import Recorder from './recorder'
+import { Trace } from './log'
 const AudioContext = window.AudioContext || window.webkitAudioContext
 
 export default class VoiceRecognizer
 {
-    audioContext = new AudioContext()
-
-    constructor()
+    constructor({ key })
     {
-        super()
+        this.googleSpeechKey = key
+        this.audioContext = new AudioContext()
         navigator.mediaDevices.getUserMedia({ audio: true })
         .then(stream =>
         {
@@ -76,7 +74,7 @@ export default class VoiceRecognizer
                 this.timestamp = now
 
                 axios
-                .post('https://speech.googleapis.com/v1/speech:recognize', requestData, { params: { key: SPEECH_API_KEY } })
+                .post('https://speech.googleapis.com/v1/speech:recognize', requestData, { params: { key: this.googleSpeechKey } })
                 .then(({ data }) =>
                 {
                     if (!data.results)
@@ -99,7 +97,7 @@ export default class VoiceRecognizer
 
     DownSampleBuffer(context, sourceBuffer, targetRate)
     {
-        return new Promise<Float32Array>(resolve =>
+        return new Promise(resolve =>
         {
             if (targetRate == context.sampleRate)
             {

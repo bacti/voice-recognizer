@@ -1,2 +1,2 @@
-import VoiceRecognizer from './srcv/voice-recognizer'
+import VoiceRecognizer from './src/voice-recognizer'
 export default VoiceRecognizer
