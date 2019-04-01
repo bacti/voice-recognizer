@@ -94,7 +94,7 @@ export default class VoiceRecognizer
                     if (!data.results)
                     {
                         this.options.debug && Trace('Try again!!')
-                        result.transcript = []
+                        result.transcripts = null
                         return resolve(result)
                     }
                     const [{ alternatives }] = data.results
@@ -102,7 +102,7 @@ export default class VoiceRecognizer
                     {
                         this.options.debug && Trace(`* [${transcript}] ${(confidence*100).toFixed(2)}%`)
                     })
-                    result.transcript = alternatives
+                    result.transcripts = alternatives
                     resolve(result)
                 })
             }))
