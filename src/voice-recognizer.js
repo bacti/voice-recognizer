@@ -37,11 +37,9 @@ export default class VoiceRecognizer
         return new Promise(resolve =>
         {
             Trace('recording...')
-            document.getElementById('log').innerText = 'Recording ...\n'
             this.timestamp = Date.now()
             this.audioRecorder.Clear()
             this.audioRecorder.Record()
-            setTimeout(evt => this.Stop() && resolve(), 1000)
         })
     }
 
