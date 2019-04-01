@@ -5,10 +5,10 @@ const AudioContext = window.AudioContext || window.webkitAudioContext
 
 export default class VoiceRecognizer
 {
-    constructor(options = {})
+    constructor(options)
     {
         this.audioContext = new AudioContext()
-        this.options = options
+        this.options = Object.assign({ debug: false }, options)
     }
 
     Initialize()
@@ -41,7 +41,7 @@ export default class VoiceRecognizer
 
     Start()
     {
-        Trace('Recording...')
+        this.options.debug && Trace('Recording...')
         this.audioRecorder.Clear()
         this.audioRecorder.Record()
         this.UpdateAnalysers()
