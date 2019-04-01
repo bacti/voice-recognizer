@@ -34,17 +34,19 @@ export default class VoiceRecognizer
 
     Start()
     {
-        return new Promise(resolve =>
-        {
-            Trace('Recording...')
-            this.audioRecorder.Clear()
-            this.audioRecorder.Record()
-        })
+        Trace('Recording...')
+        this.audioRecorder.Clear()
+        this.audioRecorder.Record()
     }
 
     Stop()
     {
+        Trace('Stop!!')
         this.audioRecorder.Stop()
+    }
+
+    Check()
+    {
         return this.audioRecorder.GetBuffers(buffers => this.GotBuffers(buffers))
     }
 
@@ -83,7 +85,7 @@ export default class VoiceRecognizer
                     if (!data.results)
                     {
                         Trace('Try again!!')
-                        return
+                        return resolve()
                     }
                     const [{ alternatives }] = data.results
                     alternatives.forEach(({ transcript, confidence = 1 }) =>
