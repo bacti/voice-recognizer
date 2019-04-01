@@ -82,7 +82,7 @@ export default class VoiceRecognizer
                 this.timestamp = now
 
                 axios
-                .post('https://speech.googleapis.com/v1/speech:recognize', requestData, { params: { key: this.googleSpeechKey } })
+                .post('https://speech.googleapis.com/v1/speech:recognize', requestData, { params: { key: this.options.key } })
                 .then(({ data }) =>
                 {
                     if (!data.results)
@@ -92,7 +92,6 @@ export default class VoiceRecognizer
                         return
                     }
                     const [{ alternatives }] = data.results
-                    console.log(alternatives)
                     alternatives.forEach(({ transcript, confidence = 1 }) =>
                     {
                         document.getElementById('log').innerText += `* [${transcript}] ${(confidence*100).toFixed(2)}%\n`
