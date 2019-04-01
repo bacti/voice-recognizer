@@ -36,8 +36,7 @@ export default class VoiceRecognizer
     {
         return new Promise(resolve =>
         {
-            Trace('recording...')
-            this.timestamp = Date.now()
+            Trace('Recording...')
             this.audioRecorder.Clear()
             this.audioRecorder.Record()
         })
@@ -56,7 +55,7 @@ export default class VoiceRecognizer
         this.analyserNode.getByteFrequencyData(freqByteData)
         const freqValues = freqByteData.join('-').replace(/^([12]?\d\-)+|(\-[12]?\d)+$/g, '').split('-')
         const freqMean = freqValues.reduce((acc, val) => acc + +val, 0) / freqValues.length
-        document.getElementById('log').innerText += `Frequency Mean: ${freqMean}\n`
+        Trace(`Frequency Mean: ${freqMean}`)
 
         this.DownSampleBuffer(this.audioContext, buffers, 16000)
             .then(buffers =>
@@ -77,10 +76,7 @@ export default class VoiceRecognizer
                     }
                 }
 
-                const now = Date.now()
-                document.getElementById('log').innerText += `Send sample after ${(now - this.timestamp) / 1000}s\n`
-                this.timestamp = now
-
+                Trace(`Send sample ...`)
                 axios
                 .post('https://speech.googleapis.com/v1/speech:recognize', requestData, { params: { key: this.options.key } })
                 .then(({ data }) =>
@@ -88,16 +84,13 @@ export default class VoiceRecognizer
                     if (!data.results)
                     {
                         Trace('Try again!!')
-                        document.getElementById('log').innerText += `Try again!!`
                         return
                     }
                     const [{ alternatives }] = data.results
                     alternatives.forEach(({ transcript, confidence = 1 }) =>
                     {
-                        document.getElementById('log').innerText += `* [${transcript}] ${(confidence*100).toFixed(2)}%\n`
+                        Trace(`* [${transcript}] ${(confidence*100).toFixed(2)}%`)
                     })
-                    const now = Date.now()
-                    document.getElementById('log').innerText += `Get transcript in ${(now - this.timestamp) / 1000}s`
                 })
             })
     }
