@@ -5,7 +5,7 @@ const AudioContext = window.AudioContext || window.webkitAudioContext
 
 export default class VoiceRecognizer
 {
-    constructor(options)
+    constructor(options = {})
     {
         this.audioContext = new AudioContext()
         this.options = options
@@ -54,9 +54,11 @@ export default class VoiceRecognizer
     {
         const freqByteData = new Uint8Array(this.analyserNode.frequencyBinCount)
         this.analyserNode.getByteFrequencyData(freqByteData)
-        const freqValues = freqByteData.join('-').replace(/^([12]?\d\-)+|(\-[12]?\d)+$/g, '').split('-')
-        const freqMean = freqValues.reduce((acc, val) => acc + +val, 0) / freqValues.length
+        const freqMean = freqByteData.reduce((acc, val) => acc + +val, 0) / freqByteData.length
         Trace(`Frequency Mean: ${freqMean}`)
+
+        if (!this.options.key)
+            return Promise.resolve()
 
         return this.DownSampleBuffer(this.audioContext, buffers, 16000)
             .then(buffers => new Promise(resolve =>
