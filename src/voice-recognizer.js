@@ -41,13 +41,15 @@ export default class VoiceRecognizer
             this.timestamp = Date.now()
             this.audioRecorder.Clear()
             this.audioRecorder.Record()
-            setTimeout(evt =>
-            {
-                this.audioRecorder.Stop()
-                this.audioRecorder.GetBuffers(buffers => this.GotBuffers(buffers))
-                resolve()
-            }, 1000)
+            setTimeout(evt => this.Stop() && resolve(), 1000)
         })
+    }
+
+    Stop()
+    {
+        this.audioRecorder.Stop()
+        this.audioRecorder.GetBuffers(buffers => this.GotBuffers(buffers))
+        return true
     }
 
     GotBuffers([buffers])
