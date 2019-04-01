@@ -18,7 +18,7 @@ export default class VoiceRecognizer
             .then(stream =>
             {
                 const audioInput = this.audioContext.createMediaStreamSource(stream)
-                this.audioRecorder = new Recorder(audioInput)
+                this.audioRecorder = this.options.key && new Recorder(audioInput)
                 this.analyserNode = this.audioContext.createAnalyser()
                 this.analyserNode.fftSize = 2048
                 this.freqByteData = new Uint8Array(this.analyserNode.frequencyBinCount)
@@ -41,16 +41,22 @@ export default class VoiceRecognizer
 
     Start()
     {
-        this.options.debug && Trace('Recording...')
-        this.audioRecorder.Clear()
-        this.audioRecorder.Record()
+        if (this.options.key)
+        {
+            this.options.debug && Trace('Recording...')
+            this.audioRecorder.Clear()
+            this.audioRecorder.Record()
+        }
         this.UpdateAnalysers()
     }
 
     Stop()
     {
-        this.options.debug && Trace('Stop!!')
-        this.audioRecorder.Stop()
+        if (this.options.key)
+        {
+            this.options.debug && Trace('Stop!!')
+            this.audioRecorder.Stop()
+        }
     }
 
     Check()
