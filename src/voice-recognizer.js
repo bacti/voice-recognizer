@@ -45,8 +45,7 @@ export default class VoiceRecognizer
     Stop()
     {
         this.audioRecorder.Stop()
-        this.audioRecorder.GetBuffers(buffers => this.GotBuffers(buffers))
-        return true
+        return this.audioRecorder.GetBuffers(buffers => this.GotBuffers(buffers))
     }
 
     GotBuffers([buffers])
@@ -57,8 +56,8 @@ export default class VoiceRecognizer
         const freqMean = freqValues.reduce((acc, val) => acc + +val, 0) / freqValues.length
         Trace(`Frequency Mean: ${freqMean}`)
 
-        this.DownSampleBuffer(this.audioContext, buffers, 16000)
-            .then(buffers =>
+        return this.DownSampleBuffer(this.audioContext, buffers, 16000)
+            .then(buffers => new Promise(resolve =>
             {
                 const linear16 = Int16Array.from(buffers, x => x * 32767)
                 const base64 = btoa(String.fromCharCode(...new Uint8Array(linear16.buffer)))
@@ -91,8 +90,9 @@ export default class VoiceRecognizer
                     {
                         Trace(`* [${transcript}] ${(confidence*100).toFixed(2)}%`)
                     })
+                    resolve()
                 })
-            })
+            }))
     }
 
     DownSampleBuffer(context, sourceBuffer, targetRate)
