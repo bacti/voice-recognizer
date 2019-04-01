@@ -21,6 +21,7 @@ export default class VoiceRecognizer
                 this.audioRecorder = new Recorder(audioInput)
                 this.analyserNode = this.audioContext.createAnalyser()
                 this.analyserNode.fftSize = 2048
+                this.freqByteData = new Uint8Array(this.analyserNode.frequencyBinCount)
                 audioInput.connect(this.analyserNode)
                 resolve()
             })
@@ -34,8 +35,7 @@ export default class VoiceRecognizer
 
     UpdateAnalysers()
     {
-        const freqByteData = new Uint8Array(this.analyserNode.frequencyBinCount)
-        this.analyserNode.getByteFrequencyData(freqByteData)
+        this.analyserNode.getByteFrequencyData(this.freqByteData)
         window.requestAnimationFrame(evt => this.UpdateAnalysers())
     }
 
@@ -60,9 +60,7 @@ export default class VoiceRecognizer
 
     GotBuffers([buffers])
     {
-        const freqByteData = new Uint8Array(this.analyserNode.frequencyBinCount)
-        this.analyserNode.getByteFrequencyData(freqByteData)
-        const freqMean = freqByteData.reduce((acc, val) => acc + +val, 0) / freqByteData.length
+        const freqMean = this.freqByteData.reduce((acc, val) => acc + +val, 0) / this.freqByteData.length
         Trace(`Frequency Mean: ${freqMean}`)
 
         if (!this.options.key)
