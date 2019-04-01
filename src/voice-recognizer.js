@@ -55,17 +55,18 @@ export default class VoiceRecognizer
 
     Check()
     {
-        return this.audioRecorder.GetBuffers(buffers => this.GotBuffers(buffers))
-    }
-
-    GotBuffers([buffers])
-    {
+        const result = {}
         const freqMean = this.freqByteData.reduce((acc, val) => acc + +val, 0) / this.freqByteData.length
         this.options.debug && Trace(`Frequency Mean: ${freqMean}`)
-
+        result.freqMean = freqMean
         if (!this.options.key)
-            return Promise.resolve()
+            return Promise.resolve(result)
 
+        return this.audioRecorder.GetBuffers(buffers => this.GotBuffers(buffers, result))
+    }
+
+    GotBuffers([buffers], result)
+    {
         return this.DownSampleBuffer(this.audioContext, buffers, 16000)
             .then(buffers => new Promise(resolve =>
             {
@@ -100,7 +101,8 @@ export default class VoiceRecognizer
                     {
                         this.options.debug && Trace(`* [${transcript}] ${(confidence*100).toFixed(2)}%`)
                     })
-                    resolve()
+                    result.transcript = alternatives
+                    resolve(result)
                 })
             }))
     }
