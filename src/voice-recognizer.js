@@ -34,19 +34,20 @@ export default class VoiceRecognizer
 
     Start()
     {
-        Trace('recording...')
-        document.getElementById('log').innerText = 'Recording ...\n'
-        this.timestamp = Date.now()
-        this.startButton.disabled = true
-        this.audioRecorder.Clear()
-        this.audioRecorder.Record()
-        setTimeout(evt =>
+        return new Promise(resolve =>
         {
-            this.startButton.disabled = false
-            this.audioRecorder.Stop()
-            this.audioRecorder.GetBuffers(buffers => this.GotBuffers(buffers))
-        }, 1000)
-
+            Trace('recording...')
+            document.getElementById('log').innerText = 'Recording ...\n'
+            this.timestamp = Date.now()
+            this.audioRecorder.Clear()
+            this.audioRecorder.Record()
+            setTimeout(evt =>
+            {
+                this.audioRecorder.Stop()
+                this.audioRecorder.GetBuffers(buffers => this.GotBuffers(buffers))
+                resolve()
+            }, 1000)
+        })
     }
 
     GotBuffers([buffers])
