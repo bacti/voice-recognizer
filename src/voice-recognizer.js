@@ -52,7 +52,7 @@ export default class VoiceRecognizer
 
     GotBuffers([buffers])
     {
-        let freqByteData = new Uint8Array(this.analyserNode.frequencyBinCount)
+        const freqByteData = new Uint8Array(this.analyserNode.frequencyBinCount)
         this.analyserNode.getByteFrequencyData(freqByteData)
         const freqValues = freqByteData.join('-').replace(/^([12]?\d\-)+|(\-[12]?\d)+$/g, '').split('-')
         const freqMean = freqValues.reduce((acc, val) => acc + +val, 0) / freqValues.length
@@ -62,7 +62,7 @@ export default class VoiceRecognizer
             .then(buffers =>
             {
                 const linear16 = Int16Array.from(buffers, x => x * 32767)
-                let base64 = btoa(String.fromCharCode(...new Uint8Array(linear16.buffer)))
+                const base64 = btoa(String.fromCharCode(...new Uint8Array(linear16.buffer)))
                 const requestData =
                 {
                     'audio': {
