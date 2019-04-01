@@ -94,7 +94,8 @@ export default class VoiceRecognizer
                     if (!data.results)
                     {
                         this.options.debug && Trace('Try again!!')
-                        return resolve()
+                        result.transcript = []
+                        return resolve(result)
                     }
                     const [{ alternatives }] = data.results
                     alternatives.forEach(({ transcript, confidence = 1 }) =>
