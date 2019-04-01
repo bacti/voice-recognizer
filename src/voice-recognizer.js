@@ -27,7 +27,7 @@ export default class VoiceRecognizer
             })
             .catch(e =>
             {
-                Error(e)
+                this.options.debug && Error(e)
                 reject()
             })
         )
@@ -49,7 +49,7 @@ export default class VoiceRecognizer
 
     Stop()
     {
-        Trace('Stop!!')
+        this.options.debug && Trace('Stop!!')
         this.audioRecorder.Stop()
     }
 
@@ -61,7 +61,7 @@ export default class VoiceRecognizer
     GotBuffers([buffers])
     {
         const freqMean = this.freqByteData.reduce((acc, val) => acc + +val, 0) / this.freqByteData.length
-        Trace(`Frequency Mean: ${freqMean}`)
+        this.options.debug && Trace(`Frequency Mean: ${freqMean}`)
 
         if (!this.options.key)
             return Promise.resolve()
@@ -85,20 +85,20 @@ export default class VoiceRecognizer
                     }
                 }
 
-                Trace(`Send sample ...`)
+                this.options.debug && Trace(`Send sample ...`)
                 axios
                 .post('https://speech.googleapis.com/v1/speech:recognize', requestData, { params: { key: this.options.key } })
                 .then(({ data }) =>
                 {
                     if (!data.results)
                     {
-                        Trace('Try again!!')
+                        this.options.debug && Trace('Try again!!')
                         return resolve()
                     }
                     const [{ alternatives }] = data.results
                     alternatives.forEach(({ transcript, confidence = 1 }) =>
                     {
-                        Trace(`* [${transcript}] ${(confidence*100).toFixed(2)}%`)
+                        this.options.debug && Trace(`* [${transcript}] ${(confidence*100).toFixed(2)}%`)
                     })
                     resolve()
                 })
