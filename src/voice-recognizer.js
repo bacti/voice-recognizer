@@ -32,11 +32,19 @@ export default class VoiceRecognizer
         )
     }
 
+    UpdateAnalysers()
+    {
+        const freqByteData = new Uint8Array(this.analyserNode.frequencyBinCount)
+        this.analyserNode.getByteFrequencyData(freqByteData)
+        window.requestAnimationFrame(evt => this.UpdateAnalysers())
+    }
+
     Start()
     {
         Trace('Recording...')
         this.audioRecorder.Clear()
         this.audioRecorder.Record()
+        this.UpdateAnalysers()
     }
 
     Stop()
